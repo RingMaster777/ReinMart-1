@@ -15,23 +15,20 @@ namespace OnlineBidder2.Controllers
     {
         // GET: Admin
         // GET: Addproduct
-
         REINMARTEntities db = new REINMARTEntities();
         public ActionResult Index()
         {
-
             return View(db.products.ToList());
         }
         public ActionResult Create()
         {
-
             return View();
         }
+        
         [HttpPost]
         public ActionResult Create(HttpPostedFileBase file, product emp)
         {
             string filename = Path.GetFileName(file.FileName);
-            //string _filename = DateTime.Now.ToString("yymmssfff");
             string extension = Path.GetExtension(file.FileName);
             string path = Path.Combine(Server.MapPath("~/assets/img/product/"), filename);
             emp.image = "~/assets/img/product/" + filename;
@@ -118,8 +115,6 @@ namespace OnlineBidder2.Controllers
                     }
                 }
             }
-            
-
             return View();
         }
 
@@ -130,8 +125,7 @@ namespace OnlineBidder2.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             var product = db.products.Find(id);
-            //Session["imgPath"] = product.image;
-
+            
             if (product == null)
             {
                 return HttpNotFound();
@@ -146,8 +140,7 @@ namespace OnlineBidder2.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             var product = db.products.Find(id);
-            //Session["imgPath"] = product.image;
-
+            
             if (product == null)
             {
                 return HttpNotFound();
