@@ -16,13 +16,9 @@ namespace OnlineBidder2.Controllers
     {
         REINMARTEntities db = new REINMARTEntities();
         
-        
-
         public ActionResult Index(int? page)
         {
-            
             // pagination
-
             var data = (from s in db.products select s);
 
             var newProduct = data.OrderByDescending(s => s.productId).Take(3);
@@ -64,7 +60,6 @@ namespace OnlineBidder2.Controllers
             if (Request.Cookies["user"] == null)
             {
                 return View();
-
             }
              else  return RedirectToAction("Index","Home");
             
@@ -79,39 +74,29 @@ namespace OnlineBidder2.Controllers
                 if (usr != null && usr.status == "User")
                 {
                     HttpCookie userCookie = new HttpCookie("user", usr.userId.ToString());
-                    //HttpCookie username = new HttpCookie("usernameshow", usr.userName);
-
-                    //userCookie.Expires = DateTime.Now
                     Response.Cookies.Add(userCookie);
-                    //Response.Cookies.Add(username);
-
                     return RedirectToAction("");
                 }
                 else if (usr != null && usr.status == "admin")
                 {
                     HttpCookie userCookie = new HttpCookie("user", usr.userId.ToString());
-                    //HttpCookie username = new HttpCookie("usernameshow", usr.userName);
-
-                    //userCookie.Expires = DateTime.Now
                     Response.Cookies.Add(userCookie);
                     userCookie = new HttpCookie("status", usr.status);
                     Response.Cookies.Add(userCookie);
-                    //Response.Cookies.Add(username);
-
                     return RedirectToAction("Index", "Admin");
+                }
+                else
+                {
+                     return View();
                 }
             }
             catch (Exception)
             {
                 ModelState.Clear();
                 ViewBag.Message = "Login Failed";
-
                 return View();
             }
             return View();
-
-
-
         }
 
         public ActionResult Logout()
@@ -121,28 +106,22 @@ namespace OnlineBidder2.Controllers
             HttpCookie nameCookie = Request.Cookies["user"];
             nameCookie.Expires = DateTime.Now.AddDays(-1);
             Response.Cookies.Add(nameCookie);
-
+            
             nameCookie = Request.Cookies["status"];
             nameCookie.Expires = DateTime.Now.AddDays(-1);
             Response.Cookies.Add(nameCookie);
-
-
+            
             return RedirectToAction("Login");
         }
     
-
-
         [HttpGet]
         public ActionResult Register()
         {
-
             if (Request.Cookies["user"] == null)
             {
                 return View();
-
             }
             else return RedirectToAction("Index", "Home");
-
         }
 
         [HttpPost]
@@ -161,7 +140,6 @@ namespace OnlineBidder2.Controllers
 
         public ActionResult UserProfile(int? id)
         {
-
             if (Request.Cookies["user"] != null)
             {
                 if (id == null)
@@ -170,21 +148,18 @@ namespace OnlineBidder2.Controllers
                 }
                 var loggedUser = db.users.Find(id);
                 return View(loggedUser);
-
             }
             else return RedirectToAction("Index", "Home");
-
         }
+        
         [HttpPost]
         public ActionResult UserProfile(HttpPostedFileBase file, user u)
         {
             return View();
         }
 
-
         public ActionResult SingleProduct(int? id)
         {
-
             if (Request.Cookies["user"] != null)
             {
                 if (id == null)
@@ -199,7 +174,6 @@ namespace OnlineBidder2.Controllers
                     highestBidAmount = Convert.ToInt32(highestBid[0].HighestBid);
                     var user = db.users.Find(highestBid[0].userId);
                     ViewBag.highestBidderName = user.userName;
-
                 }
                 else
                 {
@@ -207,8 +181,6 @@ namespace OnlineBidder2.Controllers
                     ViewBag.highestBidderName = "";
                 }
                 ViewBag.highestBidAmount = highestBidAmount;
-
-                
 
                 if (product == null)
                 {
@@ -225,7 +197,6 @@ namespace OnlineBidder2.Controllers
                 return View(product);
 
             }else return RedirectToAction("Login", "Home");
-            
         }
 
         [HttpGet]
@@ -251,7 +222,6 @@ namespace OnlineBidder2.Controllers
             {
                 List<placeBid> pl = db.placeBids.Where(temp => temp.productId == product.productId).ToList();
                 amount += Convert.ToInt32(pl[0].HighestBid);
-
             }
             ViewBag.amount = amount;
             Session["amount"] = amount.ToString();
@@ -293,7 +263,6 @@ namespace OnlineBidder2.Controllers
                         Quantity = totProduct,
                     },
                 },
-
                     Mode = "payment",
                     SuccessUrl = "https://localhost:44363/Home/Index",
                     CancelUrl = "https://localhost:44363/Home/Index",
@@ -326,11 +295,9 @@ namespace OnlineBidder2.Controllers
             int idd = Convert.ToInt32(id);
             List<placeBid> placebid = db.placeBids.Where(temp => temp.productId == idd).ToList();
             
-
             product product = db.products.Find(Convert.ToInt32(idd));
-
             placeBid pd = new placeBid();
-
+            
             if(product==null)
             {
                 return HttpNotFound();
@@ -347,12 +314,7 @@ namespace OnlineBidder2.Controllers
                     pd.BidDate = dateTime;
 
                     db.placeBids.Add(pd);
-                    db.SaveChanges();
-                    
-                }
-                else
-                {
-
+                    db.SaveChanges();   
                 }
             }
             else
@@ -360,7 +322,6 @@ namespace OnlineBidder2.Controllers
                 if (Convert.ToInt32(placebid[0].HighestBid) < Convert.ToInt32(amount))
                 {
                     placebid[0].userId = int.Parse(Request.Cookies["user"].Value);
-
                     placebid[0].productId = Convert.ToInt32(id);
                     placebid[0].HighestBid = amount;
 
@@ -372,24 +333,15 @@ namespace OnlineBidder2.Controllers
                         return RedirectToAction("Index");
                     }
                 }
-                else
-                {
-
-                }
-
             }
-
             return RedirectToAction("Index", "Home");
         }
 
         public ActionResult OnGoingBdding(int? page)
         {
-
             // pagination
-
             var data = (from s in db.products where s.status=="unsold" && s.EndBidTime > DateTime.Now select s);
-
-
+            
             if (page > 0)
                 page = page;
             else page = 1;
