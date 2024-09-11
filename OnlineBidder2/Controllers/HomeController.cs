@@ -264,23 +264,15 @@ namespace OnlineBidder2.Controllers
         [HttpPost]
         public ActionResult checkout()
         {
-           
-            if (Session["cart"] == null)
+            if (Session["cart"] != null)
             {
-               
-            }
-            else
-            {
-                
                 List<product> prodct_list = (List<product>)Session["cart"];
-              
                 String st = "";
                 foreach(var prodct in prodct_list)
                 {
                     prodct.status = "sold";
                     st = st + prodct.productName + ",";
                 }
-                
                 int totProduct = prodct_list.Count;
 
                 var option = new Stripe.Checkout.SessionCreateOptions
